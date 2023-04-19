@@ -25,6 +25,8 @@ struct CardPickerView: View {
                             if contentVM.cards.contains(where: { $0 == card }) {
                                 CardView(card: card)
                                     .onTapGesture {
+                                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                        
                                         contentVM.addCard(card: card)
                                         contentVM.selectedHand = .none
                                     }

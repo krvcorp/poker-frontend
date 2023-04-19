@@ -36,32 +36,40 @@ struct ContentView: View {
                         .cornerRadius(10)
                 })
             }
+            .fontWeight(.bold)
             .padding()
             .background(Color.gray.opacity(0.25))
             .cornerRadius(10)
             .padding()
+            VStack {
+                HStack {
+                    Spacer()
+                    Text("Player 2")
+                    .font(.title3.bold())
+                    Spacer()
+                }
+                
+                HStack {
+                    ForEach(contentVM.player2Cards + Array(repeating: CardModel.placeholder(), count: max(0, 2 - contentVM.player2Cards.count))) { card in
+                        CardView(card: card)
+                            .onTapGesture {
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
-            HStack {
-                ForEach(contentVM.player2Cards + Array(repeating: CardModel.placeholder(), count: max(0, 2 - contentVM.player2Cards.count))) { card in
-                    CardView(card: card)
-                        .onTapGesture {
-                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                            impactMed.impactOccurred()
-
-                            if card.isPlaceholder {
-                                contentVM.selectedHand = .player2
-                            } else {
-                                contentVM.removeCard(card: card, hand: .player2)
+                                if card.isPlaceholder {
+                                    contentVM.selectedHand = .player2
+                                } else {
+                                    contentVM.removeCard(card: card, hand: .player2)
+                                }
                             }
-                        }
+                    }
                 }
             }
+
             HStack {
                 ForEach(contentVM.tableCards + Array(repeating: CardModel.placeholder(), count: max(0, 5 - contentVM.tableCards.count))) { card in
                     CardView(card: card)
                         .onTapGesture {
-                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                            impactMed.impactOccurred()
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                             
                             if card.isPlaceholder {
                                 contentVM.selectedHand = .table
@@ -71,21 +79,29 @@ struct ContentView: View {
                         }
                 }
             }
-            HStack {
-                ForEach(contentVM.player1Cards + Array(repeating: CardModel.placeholder(), count: max(0, 2 - contentVM.player1Cards.count))) { card in
-                    CardView(card: card)
-                        .onTapGesture {
-                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                            impactMed.impactOccurred()
+            VStack {
+                HStack {
+                    ForEach(contentVM.player1Cards + Array(repeating: CardModel.placeholder(), count: max(0, 2 - contentVM.player1Cards.count))) { card in
+                        CardView(card: card)
+                            .onTapGesture {
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
-                            if card.isPlaceholder {
-                                contentVM.selectedHand = .player1
-                            } else {
-                                contentVM.removeCard(card: card, hand: .player1)
+                                if card.isPlaceholder {
+                                    contentVM.selectedHand = .player1
+                                } else {
+                                    contentVM.removeCard(card: card, hand: .player1)
+                                }
                             }
-                        }
+                    }
+                }
+                HStack {
+                    Spacer()
+                    Text("Player 1")
+                    .font(.title3.bold())
+                    Spacer()
                 }
             }
+
         }
         .sheet(isPresented: $contentVM.selectedHand.isNotNone) {
             CardPickerView(contentVM: contentVM)

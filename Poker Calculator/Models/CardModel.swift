@@ -36,6 +36,7 @@ struct CardModel: Identifiable, Equatable {
         suit == .placeholder && rank == .placeholder
     }
 
+
     static func == (lhs: CardModel, rhs: CardModel) -> Bool {
         lhs.suit == rhs.suit && lhs.rank == rhs.rank
     }

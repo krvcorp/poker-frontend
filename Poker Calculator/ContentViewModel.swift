@@ -46,13 +46,16 @@ class ContentViewModel : ObservableObject {
         }
 
         // Preset the player1 to have a royal flush and player2 to have a straight flush
-        self.addCard(card: CardModel(suit: .spades, rank: .ace), hand: .player1)
-        self.addCard(card: CardModel(suit: .spades, rank: .king), hand: .player1)
-        self.addCard(card: CardModel(suit: .spades, rank: .queen), hand: .table)
-        self.addCard(card: CardModel(suit: .spades, rank: .jack), hand: .table)
-        self.addCard(card: CardModel(suit: .spades, rank: .ten), hand: .table)
+        self.addCard(card: CardModel(suit: .diamonds, rank: .ace), hand: .player1)
+        self.addCard(card: CardModel(suit: .spades, rank: .seven), hand: .player1)
+        
+        self.addCard(card: CardModel(suit: .hearts, rank: .six), hand: .table)
+        self.addCard(card: CardModel(suit: .diamonds, rank: .three), hand: .table)
+        self.addCard(card: CardModel(suit: .hearts, rank: .three), hand: .table)
+        self.addCard(card: CardModel(suit: .hearts, rank: .two), hand: .table)
+        self.addCard(card: CardModel(suit: .spades, rank: .two), hand: .table)
 
-        self.addCard(card: CardModel(suit: .spades, rank: .nine), hand: .player2)
+        self.addCard(card: CardModel(suit: .hearts, rank: .eight), hand: .player2)
         self.addCard(card: CardModel(suit: .spades, rank: .eight), hand: .player2)
     }
 
@@ -130,7 +133,7 @@ class ContentViewModel : ObservableObject {
         var player2Wins: Int = 0
         var ties: Int = 0
         
-        for i: Int in 1...10000 {
+        for i: Int in 1...2 {
             // create a local copy of the table
             var table = self.tableCards
             var cards = self.cards
@@ -496,7 +499,7 @@ class ContentViewModel : ObservableObject {
                 }
             }
         }
-        
+
         var player2TwoPairRank = 0
         if player2Pair {
             // check if there are is another pair with different rank
@@ -509,17 +512,22 @@ class ContentViewModel : ObservableObject {
             }
         }
         
+        // print player1TwoPair, player1Pair, player1PairRank, player1TwoPairRank
+        // print player2TwoPair, player2Pair, player2PairRank, player2TwoPairRank
+        print(player1TwoPair, player1Pair, player1PairRank, player1TwoPairRank)
+        print(player2TwoPair, player2Pair, player2PairRank, player2TwoPairRank)
+        print(player1FullHand)
+        print(player2FullHand)
+
         if player1TwoPair && player2TwoPair {
-            // check if max of player1TwoPairRank and player1PairRank is greater than max of player2TwoPairRank and player2PairRank
-            if max(player1TwoPairRank, player1PairRank) > max(player2TwoPairRank, player2PairRank) {
+            if player1PairRank > player2PairRank {
                 return .player1
-            } else if max(player1TwoPairRank, player1PairRank) < max(player2TwoPairRank, player2PairRank) {
+            } else if player1PairRank < player2PairRank {
                 return .player2
             } else {
-                // check if min of player1TwoPairRank and player1PairRank is greater than min of player2TwoPairRank and player2PairRank
-                if min(player1TwoPairRank, player1PairRank) > min(player2TwoPairRank, player2PairRank) {
+                if player1TwoPairRank > player2TwoPairRank {
                     return .player1
-                } else if min(player1TwoPairRank, player1PairRank) < min(player2TwoPairRank, player2PairRank) {
+                } else if player1TwoPairRank < player2TwoPairRank {
                     return .player2
                 } else {
                     // check for kicker
@@ -591,6 +599,7 @@ class ContentViewModel : ObservableObject {
         } else {
             return .none
         }
+        
     }
 
 }
