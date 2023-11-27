@@ -13,7 +13,7 @@ struct CardModel: Identifiable, Equatable {
     let rank: Rank
 
     var description: String {
-        "\(suit.rawValue)\(rank.rawValue)"
+        "\(rank.rawValue) of \(suit.rawValue)"
     }
 
     /// Create a placeholder card

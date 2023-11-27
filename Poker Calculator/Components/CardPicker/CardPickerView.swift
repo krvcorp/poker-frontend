@@ -26,9 +26,11 @@ struct CardPickerView: View {
                                 CardView(card: card)
                                     .onTapGesture {
                                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                        
+
                                         contentVM.addCard(card: card)
-                                        contentVM.selectedHand = .none
+                                        if (contentVM.selectedHand == .player1 && contentVM.player1Cards.count == 2) || (contentVM.selectedHand == .player2 && contentVM.player2Cards.count == 2) || (contentVM.selectedHand == .table && contentVM.tableCards.count == 5) {
+                                            contentVM.selectedHand = .none
+                                        }
                                     }
                             } else {
                                 CardView(card: card)

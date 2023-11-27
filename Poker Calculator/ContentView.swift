@@ -39,8 +39,10 @@ struct ContentView: View {
             .fontWeight(.bold)
             .padding()
             .background(Color.gray.opacity(0.25))
-            .cornerRadius(10)
+            .cornerRadius(15)
             .padding()
+            .padding(.bottom, 25)
+            
             VStack {
                 HStack {
                     Spacer()
@@ -105,7 +107,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $contentVM.selectedHand.isNotNone) {
             CardPickerView(contentVM: contentVM)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.large])
         }
     }
 }
