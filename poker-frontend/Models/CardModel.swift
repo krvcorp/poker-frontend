@@ -16,22 +16,10 @@ struct CardModel: Identifiable, Equatable {
         "\(rank.rawValue) of \(suit.rawValue)"
     }
 
-    /// Create a placeholder card
-    /// - Parameters: None
-    /// - Returns: CardModel
-    /// - Throws: None
-    /// - Complexity: O(1)
-    /// - Note: This is a static function
     static func placeholder() -> CardModel {
         CardModel(suit: .placeholder, rank: .placeholder)
     }
 
-    /// Check if the card is a placeholder
-    /// - Parameters: None
-    /// - Returns: Bool
-    /// - Throws: None
-    /// - Complexity: O(1)
-    /// - Note: This is a computed property
     var isPlaceholder: Bool {
         suit == .placeholder && rank == .placeholder
     }

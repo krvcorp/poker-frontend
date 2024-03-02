@@ -7,8 +7,20 @@
 
 import SwiftUI
 
-struct CardPickerView: View {
-    @ObservedObject var contentVM : ContentViewModel
+protocol CardSelectionProtocol: ObservableObject {
+    var selectedHand: Hand { get set }
+    var player1Cards: [CardModel] { get set }
+    var player2Cards: [CardModel] { get set }
+    var tableCards: [CardModel] { get set }
+    var cards: [CardModel] { get set }
+    func addCard(card: CardModel)
+    func removeCard(card: CardModel)
+    func removeCard(card: CardModel, from hand: Hand)
+}
+
+
+struct CardPickerView<ViewModel: CardSelectionProtocol>: View {
+    @ObservedObject var viewModel: ViewModel
     
     var body: some View {
         ScrollView {
@@ -22,14 +34,14 @@ struct CardPickerView: View {
                     VStack {
                         ForEach(Rank.allCases.filter { $0 != .placeholder }, id: \.self) { rank in
                             let card = CardModel(suit: suit, rank: rank)
-                            if contentVM.cards.contains(where: { $0 == card }) {
+                            if viewModel.cards.contains(where: { $0 == card }) {
                                 CardView(card: card)
                                     .onTapGesture {
                                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
-                                        contentVM.addCard(card: card)
-                                        if (contentVM.selectedHand == .player1 && contentVM.player1Cards.count == 2) || (contentVM.selectedHand == .player2 && contentVM.player2Cards.count == 2) || (contentVM.selectedHand == .table && contentVM.tableCards.count == 5) {
-                                            contentVM.selectedHand = .none
+                                        viewModel.addCard(card: card)
+                                        if (viewModel.selectedHand == .player1 && viewModel.player1Cards.count == 2) || (viewModel.selectedHand == .player2 && viewModel.player2Cards.count == 2) || (viewModel.selectedHand == .table && viewModel.tableCards.count == 5) {
+                                            viewModel.selectedHand = .none
                                         }
                                     }
                             } else {
@@ -42,12 +54,5 @@ struct CardPickerView: View {
             }
             .padding()
         }
-    }
-
-}
-
-struct CardPickerView_Previews: PreviewProvider {
-    static var previews: some View {
-        CardPickerView(contentVM: ContentViewModel())
     }
 }
