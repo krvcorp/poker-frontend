@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:">
+      location = "self:/Users/khoinguyen/Programming/poker-app/poker-frontend/poker-frontend.xcodeproj">
    </FileRef>
 </Workspace>

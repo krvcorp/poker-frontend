@@ -1,6 +1,6 @@
 //
-//  Poker_CalculatorApp.swift
-//  Poker Calculator
+//  PokerApp.swift
+//  Poker
 //
 //  Created by Khoi Nguyen on 4/18/23.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct Poker_CalculatorApp: App {
+struct PokerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Poker Calculator
+//  Poker
 //
 //  Created by Khoi Nguyen on 4/18/23.
 //
