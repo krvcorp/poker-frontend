@@ -13,35 +13,56 @@ struct Action {
 }
 
 class HandTrackerViewModel: CardSelectionProtocol {
-    @Published var selectedHand: Hand = .none
-    @Published var player1Cards = [CardModel]()
-    @Published var player2Cards = [CardModel]()
-    @Published var tableCards = [CardModel]()
-    
+    @Published var selectedHand: Hand = .hero
     @Published var cards = [CardModel]()
+    @Published var hands: [Hand: [CardModel]] = [.hero: [], .flop: [], .turn: [], .river: []]
 
-    func addCard(card: CardModel) {
-        if !heroCards.contains(card) && heroCards.count < 2 { // Assuming a hero can have up to 2 cards
-            heroCards.append(card)
-            cards = cards.filter { $0 != card }
+    init() {
+        cards = Suit.allCases.filter { $0 != .placeholder }.flatMap { suit in
+            Rank.allCases.filter { $0 != .placeholder }.map { rank in
+                CardModel(suit: suit, rank: rank)
+            }
         }
     }
-    
-    func removeCard(card: CardModel) {
-        heroCards.removeAll { $0 == card }
+
+    func addCard(_ card: CardModel, to hand: Hand) {
+        guard var handCards = hands[hand], !handCards.contains(card) else { return }
+
+        if hand == .hero && handCards.count < 2 {
+            handCards.append(card)
+            hands[hand] = handCards
+            cards.removeAll { $0 == card }
+        }
+        else if hand == .flop && handCards.count < 3 {
+            handCards.append(card)
+            hands[hand] = handCards
+            cards.removeAll { $0 == card }
+        }
+        else if hand == .turn && handCards.count < 1 {
+            handCards.append(card)
+            hands[hand] = handCards
+            cards.removeAll { $0 == card }
+        }
+        else if hand == .river && handCards.count < 1 {
+            handCards.append(card)
+            hands[hand] = handCards
+            cards.removeAll { $0 == card }
+        }
+    }
+
+    func removeCard(_ card: CardModel, from hand: Hand) {
+        guard var handCards = hands[hand] else { return }
+        handCards.removeAll { $0 == card }
+        hands[hand] = handCards
+
         if !cards.contains(card) {
             cards.append(card)
         }
     }
     
-    func removeCard(card: CardModel, from hand: Hand) {
-        print("will not be used")
-    }
-    
+    // Action related tracking
     @Published var actions = [Action]()
     @Published var currentPlayer = 1
-    @Published var heroCards = [CardModel]()
-
     
     func goBack() {
         guard !actions.isEmpty else { return }
@@ -55,9 +76,14 @@ class HandTrackerViewModel: CardSelectionProtocol {
     }
     
     func call() {
-        addAction(playerNumber: currentPlayer, betSize: 1)
+        let defaultBetSize = 1
+        
+        let lastBetSize = actions.last(where: { $0.betSize > 0 })?.betSize ?? defaultBetSize
+        
+        addAction(playerNumber: currentPlayer, betSize: lastBetSize)
         advancePlayer()
     }
+
     
     func fold() {
         addAction(playerNumber: currentPlayer, betSize: 0)
@@ -65,7 +91,9 @@ class HandTrackerViewModel: CardSelectionProtocol {
     }
     
     func endStreet() {
-        advancePlayer()
+        // print all the published variables
+        print(hands)
+        print(actions)
     }
     
     private func addAction(playerNumber: Int, betSize: Int) {

@@ -16,7 +16,6 @@ struct RaiseSheetView: View {
             // Adjust raise amount
             HStack(spacing: 40) {
                 Group {
-                    AdjustButton(label: "-50", action: { adjustRaise(by: -50) })
                     AdjustButton(label: "-25", action: { adjustRaise(by: -25) })
                     AdjustButton(label: "-5", action: { adjustRaise(by: -5) })
                     AdjustButton(label: "-1", action: { adjustRaise(by: -1) })
@@ -26,7 +25,6 @@ struct RaiseSheetView: View {
                     AdjustButton(label: "+1", action: { adjustRaise(by: 1) }, isPositive: true)
                     AdjustButton(label: "+5", action: { adjustRaise(by: 5) }, isPositive: true)
                     AdjustButton(label: "+25", action: { adjustRaise(by: 25) }, isPositive: true)
-                    AdjustButton(label: "+50", action: { adjustRaise(by: 50) }, isPositive: true)
                 }
             }
             .padding(.horizontal)
@@ -68,16 +66,16 @@ struct AdjustButton: View {
     var body: some View {
         Button(action: action) {
             Text(label)
-                .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
-                .padding(.vertical, 10)
-                .padding(.horizontal, 20)
+                .padding()
+                .frame(width: 90)
                 .background(isPositive ? Color.green : Color.red)
                 .cornerRadius(10)
         }
     }
 }
+
 
 struct QuickSetButton: View {
     var label: String

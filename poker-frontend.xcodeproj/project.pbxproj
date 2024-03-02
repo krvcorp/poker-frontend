@@ -17,6 +17,7 @@
 		6A5456D02B92DB650043470D /* HandTrackerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5456CF2B92DB650043470D /* HandTrackerViewModel.swift */; };
 		6A5456D42B92E6BC0043470D /* HeroSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5456D32B92E6BC0043470D /* HeroSheetView.swift */; };
 		6A5456D62B939D5D0043470D /* RaiseSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5456D52B939D5D0043470D /* RaiseSheetView.swift */; };
+		6A5456D82B93AB3F0043470D /* Hand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5456D72B93AB3F0043470D /* Hand.swift */; };
 		6AB2813329EF850900DB4770 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB2813229EF850900DB4770 /* ContentViewModel.swift */; };
 		6AB2813629EF855700DB4770 /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB2813529EF855700DB4770 /* CardModel.swift */; };
 		6AB2813829EF859600DB4770 /* Suit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB2813729EF859600DB4770 /* Suit.swift */; };
@@ -37,6 +38,7 @@
 		6A5456CF2B92DB650043470D /* HandTrackerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandTrackerViewModel.swift; sourceTree = "<group>"; };
 		6A5456D32B92E6BC0043470D /* HeroSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroSheetView.swift; sourceTree = "<group>"; };
 		6A5456D52B939D5D0043470D /* RaiseSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaiseSheetView.swift; sourceTree = "<group>"; };
+		6A5456D72B93AB3F0043470D /* Hand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hand.swift; sourceTree = "<group>"; };
 		6AB2813229EF850900DB4770 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		6AB2813529EF855700DB4770 /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
 		6AB2813729EF859600DB4770 /* Suit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Suit.swift; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				6AB2813529EF855700DB4770 /* CardModel.swift */,
 				6AB2813729EF859600DB4770 /* Suit.swift */,
 				6AB2813929EF85FE00DB4770 /* Rank.swift */,
+				6A5456D72B93AB3F0043470D /* Hand.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -256,6 +259,7 @@
 				6AB2813A29EF85FE00DB4770 /* Rank.swift in Sources */,
 				6A5456D62B939D5D0043470D /* RaiseSheetView.swift in Sources */,
 				6A5456D42B92E6BC0043470D /* HeroSheetView.swift in Sources */,
+				6A5456D82B93AB3F0043470D /* Hand.swift in Sources */,
 				6A5456CE2B92DB5E0043470D /* HandTrackerView.swift in Sources */,
 				6A1E007929EF1F0200CB8A99 /* PokerApp.swift in Sources */,
 				6AB2813329EF850900DB4770 /* ContentViewModel.swift in Sources */,

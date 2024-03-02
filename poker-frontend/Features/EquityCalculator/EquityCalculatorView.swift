@@ -1,29 +1,20 @@
-//
-//  EquityCalculatorView.swift
-//  Poker
-//
-//  Created by Khoi Nguyen on 4/18/23.
-//
-
 import SwiftUI
 
 struct EquityCalculatorView: View {
     @StateObject var equityCalculatorVM = EquityCalculatorViewModel()
 
     var body: some View {
-        VStack (spacing: 20) {
+        VStack(spacing: 20) {
             VStack {
                 HStack {
                     Text("Player 1: \(equityCalculatorVM.player1Odds, specifier: "%.2f")%")
                         .foregroundColor(equityCalculatorVM.player1Odds > equityCalculatorVM.player2Odds ? .green : .red)
                     Text("Player 2: \(equityCalculatorVM.player2Odds, specifier: "%.2f")%")
                         .foregroundColor(equityCalculatorVM.player2Odds > equityCalculatorVM.player1Odds ? .green : .red)
-                    
                 }
                 
                 Text("Tie: \(equityCalculatorVM.tieOdds, specifier: "%.2f")%")
-
-                // add styling to the calculate button
+                
                 Button(action: {
                     let impactMed = UIImpactFeedbackGenerator(style: .medium)
                     impactMed.impactOccurred()
@@ -43,77 +34,55 @@ struct EquityCalculatorView: View {
             .padding()
             .padding(.bottom, 25)
             
-            VStack {
-                HStack {
-                    Spacer()
-                    Text("Player 2")
-                    .font(.title3.bold())
-                    Spacer()
-                }
-                
-                HStack {
-                    ForEach(equityCalculatorVM.player2Cards + Array(repeating: CardModel.placeholder(), count: max(0, 2 - equityCalculatorVM.player2Cards.count))) { card in
-                        CardView(card: card)
-                            .onTapGesture {
-                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-
-                                if card.isPlaceholder {
-                                    equityCalculatorVM.selectedHand = .player2
-                                } else {
-                                    equityCalculatorVM.removeCard(card: card, from: .player2)
-                                }
-                            }
-                    }
-                }
-            }
-
-            HStack {
-                ForEach(equityCalculatorVM.tableCards + Array(repeating: CardModel.placeholder(), count: max(0, 5 - equityCalculatorVM.tableCards.count))) { card in
-                    CardView(card: card)
-                        .onTapGesture {
-                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                            
-                            if card.isPlaceholder {
-                                equityCalculatorVM.selectedHand = .table
-                            } else {
-                                equityCalculatorVM.removeCard(card: card, from: .table)
-                            }
-                        }
-                }
-            }
-            VStack {
-                HStack {
-                    ForEach(equityCalculatorVM.player1Cards + Array(repeating: CardModel.placeholder(), count: max(0, 2 - equityCalculatorVM.player1Cards.count))) { card in
-                        CardView(card: card)
-                            .onTapGesture {
-                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-
-                                if card.isPlaceholder {
-                                    equityCalculatorVM.selectedHand = .player1
-                                } else {
-                                    equityCalculatorVM.removeCard(card: card, from: .player1)
-                                }
-                            }
-                    }
-                }
-                HStack {
-                    Spacer()
-                    Text("Player 1")
-                    .font(.title3.bold())
-                    Spacer()
-                }
-            }
-
+            cardSection(for: .player2, title: "Player 2")
+            cardSection(for: .table, title: "Table")
+            cardSection(for: .player1, title: "Player 1", isBottom: true)
         }
         .sheet(isPresented: $equityCalculatorVM.selectedHand.isNotNone) {
             CardPickerView(viewModel: equityCalculatorVM)
                 .presentationDetents([.large])
         }
     }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+    
+    @ViewBuilder
+    private func cardSection(for hand: Hand, title: String, isBottom: Bool = false) -> some View {
+        let cards = equityCalculatorVM.hands[hand] ?? []
+        let placeholdersCount = hand == .table ? max(0, 5 - cards.count) : max(0, 2 - cards.count)
+        let placeholders = Array(repeating: CardModel.placeholder(), count: placeholdersCount)
+        
+        VStack {
+            if !isBottom {
+                HStack {
+                    Spacer()
+                    Text(title)
+                        .font(.title3.bold())
+                    Spacer()
+                }
+            }
+            
+            HStack {
+                ForEach(cards + placeholders) { card in
+                    CardView(card: card)
+                        .onTapGesture {
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            
+                            if card.isPlaceholder {
+                                equityCalculatorVM.selectedHand = hand
+                            } else {
+                                equityCalculatorVM.removeCard(card, from: hand)
+                            }
+                        }
+                }
+            }
+            
+            if isBottom {
+                HStack {
+                    Spacer()
+                    Text(title)
+                        .font(.title3.bold())
+                    Spacer()
+                }
+            }
+        }
     }
 }
