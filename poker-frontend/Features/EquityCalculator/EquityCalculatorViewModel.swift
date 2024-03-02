@@ -744,7 +744,6 @@ class EquityCalculatorViewModel: CardSelectionProtocol {
         }
 
         if player1Pair && player2Pair {
-
             if player1PairRank > player2PairRank {
                 return .player1
 
@@ -773,22 +772,15 @@ class EquityCalculatorViewModel: CardSelectionProtocol {
                         kicker = checkKicker(player1FullHand: player1FullHand, player2FullHand: player2FullHand,banned_ranks: banned_ranks) { success in
 
                         }
-
                     } else {
                         return kickerCompletion
-
                     }
-
                 }
-
             }
-
         } else if player1Pair {
             return .player1
-
         } else if player2Pair {
             return .player2
-
         }
 
         // check high cards
@@ -796,16 +788,12 @@ class EquityCalculatorViewModel: CardSelectionProtocol {
         for i in 0..<player1FullHand.count {
             if player1FullHand[i].rank.rank > player2FullHand[i].rank.rank {
                 return .player1
-
             } else if player1FullHand[i].rank.rank < player2FullHand[i].rank.rank {
                 return .player2
-
             }
-
         }
 
         return .none
-
     }
 
     func checkKicker(player1FullHand: [CardModel], player2FullHand: [CardModel], banned_ranks: [Int], completion: @escaping (Hand) -> Void) -> Int {
@@ -815,18 +803,14 @@ class EquityCalculatorViewModel: CardSelectionProtocol {
         for card in player1FullHand {
             if !banned_ranks.contains(card.rank.rank) && card.rank.rank > player1Kicker {
                 player1Kicker = card.rank.rank
-
             }
 
         }
 
         for card in player2FullHand {
-
             if !banned_ranks.contains(card.rank.rank) && card.rank.rank > player2Kicker {
                 player2Kicker = card.rank.rank
-
             }
-
         }
 
         if player1Kicker > player2Kicker {
@@ -841,6 +825,5 @@ class EquityCalculatorViewModel: CardSelectionProtocol {
             return player1Kicker
 
         }
-
     }
 }
