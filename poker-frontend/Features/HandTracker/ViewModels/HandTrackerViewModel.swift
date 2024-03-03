@@ -7,17 +7,19 @@
 
 import Foundation
 
-struct Action {
-    var playerNumber: Int
-    var betSize: Int
-}
 
 class HandTrackerViewModel: CardSelectionProtocol {
     @Published var selectedHand: Hand = .hero
     @Published var cards = [CardModel]()
     @Published var hands: [Hand: [CardModel]] = [.hero: [], .flop: [], .turn: [], .river: []]
+    @Published var actions = [Action]()
+    @Published var currentPlayer: Int = 1
+    private var currentStreet: Street = .preflop
+    private let maxPlayers: Int = 9
+    private var activePlayerNumbers: [Int] = []
 
     init() {
+        activePlayerNumbers = Array(1...maxPlayers) // Initially, all player numbers are active
         cards = Suit.allCases.filter { $0 != .placeholder }.flatMap { suit in
             Rank.allCases.filter { $0 != .placeholder }.map { rank in
                 CardModel(suit: suit, rank: rank)
@@ -60,48 +62,120 @@ class HandTrackerViewModel: CardSelectionProtocol {
         }
     }
     
-    // Action related tracking
-    @Published var actions = [Action]()
-    @Published var currentPlayer = 1
-    
     func goBack() {
         guard !actions.isEmpty else { return }
         actions.removeLast()
         currentPlayer = max(1, currentPlayer - 1)
     }
     
-    func raise(betSize: Int) {
-        addAction(playerNumber: currentPlayer, betSize: betSize)
-        advancePlayer()
+
+    func check() {
+        addAction(playerNumber: currentPlayer, betSize: 0, actionType: .check, street: currentStreet)
     }
-    
+
     func call() {
-        let defaultBetSize = 1
-        
+        let defaultBetSize: Int = 1
         let lastBetSize = actions.last(where: { $0.betSize > 0 })?.betSize ?? defaultBetSize
-        
-        addAction(playerNumber: currentPlayer, betSize: lastBetSize)
+        addAction(playerNumber: currentPlayer, betSize: lastBetSize, actionType: .call, street: currentStreet)
+    }
+
+    func raise(betSize: Int) {
+        addAction(playerNumber: currentPlayer, betSize: betSize, actionType: .raise, street: currentStreet)
+    }
+
+    func fold() {
+        addAction(playerNumber: currentPlayer, betSize: 0, actionType: .fold, street: currentStreet)
+    }
+
+    private func addAction(playerNumber: Int, betSize: Int, actionType: ActionType, street: Street) {
+        // Check for hero's cards in preflop or community cards in later streets
+        if !canProceedToNextStreet() {
+            print("Cannot proceed to the next street. Required cards are not inputted.")
+            return
+        }
+
+        let action = Action(playerNumber: playerNumber, betSize: betSize, actionType: actionType, position: .utg, // Position to be adjusted later
+                            isHero: false, street: street)
+        actions.append(action)
+        if actionType == .fold {
+            activePlayerNumbers = activePlayerNumbers.filter { $0 != playerNumber }
+        }
+
+        print("Player \(playerNumber) did \(actionType) with bet size \(betSize) on \(street)")
+
         advancePlayer()
     }
 
-    
-    func fold() {
-        addAction(playerNumber: currentPlayer, betSize: 0)
-        advancePlayer()
-    }
-    
-    func endStreet() {
-        // print all the published variables
-        print(hands)
-        print(actions)
-    }
-    
-    private func addAction(playerNumber: Int, betSize: Int) {
-        let action = Action(playerNumber: playerNumber, betSize: betSize)
-        actions.append(action)
-    }
-    
     private func advancePlayer() {
-        currentPlayer += 1
+        if let currentIndex = activePlayerNumbers.firstIndex(of: currentPlayer), currentIndex + 1 < activePlayerNumbers.count {
+            currentPlayer = activePlayerNumbers[currentIndex + 1]
+        } else {
+            endStreet()
+        }
+    }
+
+    private func adjustPlayerPositions() {
+        let positionsInOrder: [Position] = [.utg, .utg1, .utg2, .lojack, .hijack, .cutoff, .button, .smallBlind, .bigBlind]
+        let numberOfActivePlayers = activePlayerNumbers.count
+        let adjustedPositions = Array(positionsInOrder.prefix(numberOfActivePlayers))
+
+        actions = actions.map { action in
+            var newAction = action
+            if let index = activePlayerNumbers.firstIndex(of: action.playerNumber) {
+                newAction.position = adjustedPositions[index % numberOfActivePlayers]
+            }
+            return newAction
+        }
+    }
+
+    private func canProceedToNextStreet() -> Bool {
+        switch currentStreet {
+        case .preflop:
+            return hands[.hero]?.count ?? 0 == 2
+        case .flop:
+            return hands[.flop]?.count ?? 0 == 3
+        case .turn:
+            return hands[.turn]?.count ?? 0 == 1
+        case .river:
+            return hands[.river]?.count ?? 0 == 1
+        default:
+            return false
+        }
+    }
+
+    private func nextStreet(_ street: Street) -> Street {
+        switch street {
+        case .preflop: return .flop
+        case .flop: return .turn
+        case .turn: return .river
+        case .river: return .preflop // or handle end of hand
+        }
+    }
+
+    func endStreet() {
+        if !canProceedToNextStreet() {
+            print("Cannot end street. Required cards are not inputted.")
+            return
+        }
+
+        adjustPlayerPositions()
+
+        if currentStreet == .river {
+            endHand()
+            return
+        } else {
+            currentStreet = nextStreet(currentStreet)
+            print("Moving to \(currentStreet). Active players: \(activePlayerNumbers.count)")
+        }
+    }
+
+    func endHand() {
+        print("Hand ended. Final actions:")
+        for action in actions {
+            print("Player \(action.playerNumber) \(action.actionType) as \(action.position) on \(action.street)")
+        }
+        actions.removeAll()
+        currentPlayer = 1
+        currentStreet = .preflop
     }
 }
