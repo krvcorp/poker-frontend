@@ -2,26 +2,32 @@ import SwiftUI
 
 struct HeroSheetView: View {
     @ObservedObject var handTrackerVM: HandTrackerViewModel
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     var body: some View {
         VStack {
-            Text("Select Your Cards")
-                .font(.headline)
-                .padding()
-
-            cardSection(for: .hero, title: "Hero Hand", requiredCount: 2)
-            
-            if handTrackerVM.hands[.hero]?.count == 2 {
-                cardSection(for: .flop, title: "Flop", requiredCount: 3)
-            }
-            
-            if handTrackerVM.hands[.flop]?.count == 3 {
-                cardSection(for: .turn, title: "Turn", requiredCount: 1)
-            }
-            
-            if handTrackerVM.hands[.turn]?.count == 1 {
+            if handTrackerVM.hands[.river]?.count == 1 {
+                // If the river card is selected, presumably the next steps or summary
+            } else if handTrackerVM.hands[.turn]?.count == 1 {
+                Text("Select the river card")
+                    .font(.title3.bold())
+                    .padding(.bottom, 5)
                 cardSection(for: .river, title: "River", requiredCount: 1)
+            } else if handTrackerVM.hands[.flop]?.count == 3 {
+                Text("Select the turn card")
+                    .font(.title3.bold())
+                    .padding(.bottom, 5)
+                cardSection(for: .turn, title: "Turn", requiredCount: 1)
+            } else if handTrackerVM.hands[.hero]?.count == 2 {
+                Text("Select the flop cards")
+                    .font(.title3.bold())
+                    .padding(.bottom, 5)
+                cardSection(for: .flop, title: "Flop", requiredCount: 3)
+            } else {
+                Text("Select your hero hand")
+                    .font(.title3.bold())
+                    .padding(.bottom, 5)
+                cardSection(for: .hero, title: "Hero Hand", requiredCount: 2)
             }
         }
         .sheet(isPresented: $isCardPickerPresented) {
@@ -52,7 +58,7 @@ struct HeroSheetView: View {
                 .padding(.bottom, 5)
             
             HStack {
-                ForEach(cards + placeholders) { card in
+                ForEach(cards + placeholders, id: \.id) { card in
                     CardView(card: card)
                         .onTapGesture {
                             UIImpactFeedbackGenerator(style: .medium).impactOccurred()

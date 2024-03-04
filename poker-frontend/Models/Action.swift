@@ -35,6 +35,32 @@ enum Position {
     case bigBlind
 }
 
+extension Position: CustomStringConvertible {
+    var description: String {
+        switch self {
+        case .utg:
+            return "UTG"
+        case .utg1:
+            return "UTG+1"
+        case .utg2:
+            return "UTG+2"
+        case .lojack:
+            return "Lojack"
+        case .hijack:
+            return "Hijack"
+        case .cutoff:
+            return "Cutoff"
+        case .button:
+            return "Button"
+        case .smallBlind:
+            return "Small Blind"
+        case .bigBlind:
+            return "Big Blind"
+        }
+    }
+}
+
+
 enum Street {
     case preflop, flop, turn, river
 }

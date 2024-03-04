@@ -43,8 +43,9 @@ struct CardPickerView<ViewModel: CardSelectionProtocol>: View {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                 ForEach(Suit.allCases.filter { $0 != .placeholder }, id: \.self) { suit in
                     VStack {
-                        ForEach(Rank.allCases.filter { $0 != .placeholder }, id: \.self) { rank in
-                            let card = CardModel(suit: suit, rank: rank)
+                        ForEach(Rank.allCases.filter { $0 != .placeholder }.map { rank -> CardModel in
+                            CardModel(suit: suit, rank: rank)
+                        }, id: \.id) { card in // Use the unique `id` of each `CardModel` for identification
                             CardView(card: card)
                                 .opacity(viewModel.cards.contains(where: { $0 == card }) ? 1.0 : 0.25)
                                 .onTapGesture {

@@ -2,7 +2,9 @@ import SwiftUI
 
 struct RaiseSheetView: View {
     @ObservedObject var handTrackerVM: HandTrackerViewModel
-    @State private var raiseAmount: Int = 0
+    // Raise amount should be the minimum raise amount allowed on the current street obtained from the HandTrackerViewModel
+    @State private var raiseAmount: Int = 2
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     var body: some View {
         VStack(spacing: 20) {
@@ -41,6 +43,7 @@ struct RaiseSheetView: View {
             // Confirm button
             Button("Confirm Raise") {
                 handTrackerVM.raise(betSize: raiseAmount)
+                presentationMode.wrappedValue.dismiss()
             }
             .buttonStyle(ConfirmButtonStyle())
             .padding(.bottom)

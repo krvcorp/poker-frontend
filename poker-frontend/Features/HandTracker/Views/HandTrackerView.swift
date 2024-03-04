@@ -3,25 +3,20 @@ import SwiftUI
 struct HandTrackerView: View {
     @StateObject var handTrackerVM = HandTrackerViewModel()
     @State private var showRaiseSheet = false
-    @State private var showHeroSheet = false
     
     var body: some View {
         VStack(spacing: 20) {
-            Text("Player \(handTrackerVM.currentPlayer)")
-                .font(.largeTitle) // Make the title larger
+            Text("Player \(handTrackerVM.currentPlayer) - \(handTrackerVM.playerStates[handTrackerVM.currentPlayer - 1].position.description)")
+                .font(.callout)
                 .fontWeight(.bold)
-            
-            if handTrackerVM.actions.count > 0 { // Show back button if there are actions to undo
-                Button(action: { handTrackerVM.goBack() }) {
-                    Text("Back")
-                        .font(.title) // Bigger font for the button text
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity, minHeight: 60) // Ensure consistent height and full width
-                        .background(Color.blue)
-                        .cornerRadius(10) // Rounded corners for a modern look
-                }
-            }
+
+            Text("Active Players: \(handTrackerVM.playerStates.filter { $0.isFolded == false }.count)")
+                .font(.callout)
+                .fontWeight(.bold)
+
+            Text("Last Bet Size: \(handTrackerVM.lastBetSize) BB")
+                .font(.callout)
+                .fontWeight(.bold)
             
             Spacer()
             
@@ -30,32 +25,35 @@ struct HandTrackerView: View {
             }
             .buttonStyle(LargeButtonStyle(backgroundColor: Color.blue))
             .sheet(isPresented: $showRaiseSheet) {
-                // Assuming RaiseSheetView exists and is correctly implemented.
                 RaiseSheetView(handTrackerVM: handTrackerVM)
             }
             
-            Button("Call") {
-                handTrackerVM.call()
+            Button(action: {
+                if handTrackerVM.shouldShowCallButton() {
+                    handTrackerVM.call()
+                } else {
+                    handTrackerVM.check()
+                }
+            }) {
+                Text(handTrackerVM.shouldShowCallButton() ? "Call" : "Check")
+                    .foregroundColor(.white)
             }
             .buttonStyle(LargeButtonStyle(backgroundColor: Color.green))
+
             
             Button("Fold") {
                 handTrackerVM.fold()
             }
-            .buttonStyle(LargeButtonStyle(backgroundColor: Color.gray))
+            .buttonStyle(LargeButtonStyle(backgroundColor: Color.red))
             
-            Button("Me") {
-                showHeroSheet = true
+            // Card Selector should automatically show on the flop, turn, and river
+            Button("Card Selector") {
+                handTrackerVM.isCardPickerPresented = true
             }
             .buttonStyle(LargeButtonStyle(backgroundColor: Color.orange))
-            .sheet(isPresented: $showHeroSheet) {
+            .sheet(isPresented: $handTrackerVM.isCardPickerPresented) {
                 HeroSheetView(handTrackerVM: handTrackerVM)
             }
-            
-            Button("End Street") {
-                handTrackerVM.endStreet()
-            }
-            .buttonStyle(LargeButtonStyle(backgroundColor: Color.purple))
             
             Spacer()
         }
@@ -69,13 +67,13 @@ struct LargeButtonStyle: ButtonStyle {
     
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
-            .font(.title2) // Increase font size
+            .font(.title2)
             .fontWeight(.bold)
             .foregroundColor(.white)
-            .frame(maxWidth: .infinity, minHeight: 60) // Make buttons larger
+            .frame(maxWidth: .infinity, minHeight: 60)
             .background(backgroundColor)
-            .cornerRadius(10) // Rounded corners for buttons
-            .padding(.horizontal) // Add some horizontal padding
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0) // Slight scale effect on press
+            .cornerRadius(10)
+            .padding(.horizontal)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
     }
 }
